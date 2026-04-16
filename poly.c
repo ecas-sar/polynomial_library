@@ -49,9 +49,22 @@ char* string_representation(polynomial_t *p)
     char term[64];
     for (int i = 0; i < p->poly_degree_plus_one; i++)
     {
-        snprintf(term, sizeof(term), "%.2fx^%d ", p->coefficients[i], p->poly_degree_plus_one-1-i); // Generates a term in the polynomial.
+        int current_exponent = p->poly_degree_plus_one-1-i;
+        if (current_exponent >= 2)
+        {
+            snprintf(term, sizeof(term), "%.2fx^%d + ", p->coefficients[i], current_exponent); // Generates a term in the polynomial.
+        }
+        else if (current_exponent == 1)
+        {
+            snprintf(term, sizeof(term), "%.2fx + ", p->coefficients[i]);
+        }
+        else
+        {
+            snprintf(term, sizeof(term), "%.2f", p->coefficients[i]);
+        }
         strcat(str_poly, term); // Concatentates terms to poly_str.
     }
-
+    // White box testing.
+    printf("Polynomial: %s\n", str_poly);
     return str_poly;
 }
