@@ -74,6 +74,7 @@ char* string_representation(polynomial_t *p)
 
 double* zeroes(polynomial_t *p)
 {
+    // Variable naming for readability and efficiency;
     int poly_degree_plus_one = p->poly_degree_plus_one;
     int poly_degree = poly_degree_plus_one-1;
     double *zeroes_list = malloc((poly_degree)*sizeof(double));
@@ -92,7 +93,7 @@ double* zeroes(polynomial_t *p)
         double discriminant = b*b - 4.00*a*c;
         if (discriminant < 0)
         {
-            printf("%s\n", "No real zeroes.");
+            printf("%s\n", "No real zeroes."); // If discriminant is negative, solutions will not be real.
             return NULL;
         }
         double numerator_one = -b + sqrt(discriminant);
@@ -107,8 +108,16 @@ double* zeroes(polynomial_t *p)
     }
     else 
     {  
-        printf("%s\n", "No zeroes here.");
-        return NULL;
+        if (coefficients[0] != 0)
+        {
+            printf("%s\n", "No zeroes here."); // Constant functions don't have a 0 except when they are 0.
+            return NULL;
+        }
+        else
+        {
+            printf("%s\n", "Entire real numbers!")
+            return NULL; // Can't really add the entire real numbers to the list otherwise the CPU will crash.
+        }
     }
     return zeroes_list;
 }
