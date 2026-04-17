@@ -1,6 +1,8 @@
 #include "poly.h"
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 void allocate_and_free_test(void)
 {
@@ -31,12 +33,45 @@ void string_repr_test(void)
     CU_ASSERT(strcmp(string_representation(&p), what_it_should_be) == 0);
 }
 
+bool two_arrays_equal(double* arr1, double* arr2, int len1, int len2)
+{
+    if (len1 != len2 || arr1 == NULL || arr2 == NULL)
+    {
+        return false; // If the arrays have different lengths, they are clearly not equal.
+    }
+    for (int i = 0; i < len1; i++)
+    {
+        if (arr1[i] != arr2[i])
+        {
+            return false; // If one element is different, the arrays are different.
+        }
+    }
+    return true;
+}
+
+void test_zeroes(void)
+{
+    polynomial_t p;
+    int poly_degree_plus_one = 3;
+    int poly_degree = poly_degree_plus_one-1;
+    allocate_poly(&p, poly_degree_plus_one);
+    p.coefficients[0] = 1;
+    p.coefficients[1] = -2;
+    p.coefficients[2] = -3;
+
+    double* expected_zeroes = malloc(poly_degree*sizeof(double));
+    expected_zeroes[0] = 3.00;
+    expected_zeroes[1] = -1.00;
+    CU_ASSERT(two_arrays_equal(expected_zeroes, zeroes(&p), poly_degree, poly_degree) == true);
+}
+
 int main()
 {
     CU_initialize_registry();
     CU_pSuite suite = CU_add_suite("TestSuite", 0, 0);
     CU_add_test(suite, "Allocation and freeing test", allocate_and_free_test);
     CU_add_test(suite, "String representation test", string_repr_test);
+    CU_add_test(suite, "Zeroes test", test_zeroes);
     CU_basic_run_tests();
     CU_cleanup_registry();
     return 0;

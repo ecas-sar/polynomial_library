@@ -1,0 +1,2 @@
+16/04/2026
+Today I wrote poly.h (the header file of a polynomial) and implemented and tested the first 3 functions of poly.c in test_suite.c. Now polynomials can be allocated, freed, and represented as a string accurately. Next time I work on this, I will try and implement the next 3 functions: zeros, turning_points, and sum_poly.
