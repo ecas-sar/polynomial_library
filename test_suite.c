@@ -49,6 +49,18 @@ bool two_arrays_equal(double* arr1, double* arr2, int len1, int len2)
     return true;
 }
 
+void initialise_polys(void)
+{
+    int num_trials = 10;
+    int poly_degree_plus_one = 3;
+    for (int i = 0; i < num_trials; i++)
+    {
+        polynomial_t p;
+        CU_ASSERT(initialise_poly_rand(&p, 3, 1, 5) == 0);
+        printf("%s\n", string_representation(&p));
+    }
+}
+
 void test_zeroes(void)
 {
     polynomial_t p;
@@ -72,6 +84,7 @@ int main()
     CU_add_test(suite, "Allocation and freeing test", allocate_and_free_test);
     CU_add_test(suite, "String representation test", string_repr_test);
     CU_add_test(suite, "Zeroes test", test_zeroes);
+    CU_add_test(suite, "Random Initialisation Test", initialise_polys);
     CU_basic_run_tests();
     CU_cleanup_registry();
     return 0;

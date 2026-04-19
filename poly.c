@@ -39,6 +39,27 @@ int free_poly(polynomial_t *p)
     return 0;
 }
 
+int initialise_poly_rand(polynomial_t *p, int poly_degree_plus_one, int val_min, int val_max)
+{
+    if (allocate_poly(p, poly_degree_plus_one) == 1)
+    {
+        return 1; // Stop if allocation fails to avoid a segfault.
+    }
+
+    for (int i = 0; i < p->poly_degree_plus_one; i++)
+    {
+        int random_coefficient = rand() % (val_max - val_min + 1) + val_min;
+        p->coefficients[i] = random_coefficient;
+    }
+    // If the first coefficient in the polynomial is 0, this will waste space, so make sure this is never the case.
+    if (p->coefficients[0] == 0)
+    {
+        p->coefficients++;
+    }
+
+    return 0;
+}
+
 char* string_representation(polynomial_t *p)
 {
     if (p == NULL || p->coefficients == NULL || p->poly_degree_plus_one < 0)
@@ -53,17 +74,22 @@ char* string_representation(polynomial_t *p)
     {
         // Stored current exponent in a variable for code readability.
         int current_exponent = p->poly_degree_plus_one-1-i;
-        if (current_exponent >= 2)
+        double current_coefficient = p->coefficients[i];
+        // No point printing a 0 coefficient, it would simply be a waste of processing power!
+        if (current_coefficient != 0)
         {
-            snprintf(term, sizeof(term), "%.2fx^%d + ", p->coefficients[i], current_exponent); // Generates a term in the polynomial.
-        }
-        else if (current_exponent == 1)
-        {
-            snprintf(term, sizeof(term), "%.2fx + ", p->coefficients[i]);
-        }
-        else
-        {
-            snprintf(term, sizeof(term), "%.2f", p->coefficients[i]);
+            if (current_exponent >= 2)
+            {
+                snprintf(term, sizeof(term), "%.2fx^%d + ", current_coefficient, current_exponent); // Generates a term in the polynomial.
+            }
+            else if (current_exponent == 1)
+            {
+                snprintf(term, sizeof(term), "%.2fx + ", current_coefficient);
+            }
+            else
+            {
+                snprintf(term, sizeof(term), "%.2f", current_coefficient);
+            }
         }
         strcat(str_poly, term); // Concatentates terms to poly_str.
     }
@@ -115,7 +141,7 @@ double* zeroes(polynomial_t *p)
         }
         else
         {
-            printf("%s\n", "Entire real numbers!")
+            printf("%s\n", "Entire real numbers!");
             return NULL; // Can't really add the entire real numbers to the list otherwise the CPU will crash.
         }
     }

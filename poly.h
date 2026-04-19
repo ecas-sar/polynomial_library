@@ -1,17 +1,23 @@
 #ifndef POLY_H
 #define POLY_H
 
-// Polynomials will have the higher degree coefficients at the start of the list.
-// E.g. [2, 4, 5] will represent 2x^2 + 4x + 5.
+/* Polynomials will have the higher degree coefficients at the start of the list.
+    E.g. [2, 4, 5] will represent 2x^2 + 4x + 5. Note about this: it might seem wasteful
+    to have polynomial list such as [1, 0, 0, 3], but this is important to have. x^3 + 3 is
+    different to x + 3 so we can't just remove groups of zeroes. */
 typedef struct {
     double *coefficients;
-    int poly_degree_plus_one; // Number of coefficients in the list, as if there are 3 coefficients then we have a 2nd order polynomial.
+    int poly_degree_plus_one; // Number of coefficients in the list, as if there are 3 coefficients then we have a 2nd degree polynomial.
 } polynomial_t;
+
 
 // Note: any functions that return int while appearing to 'do something' return 0 on success, 1 on failure.
 int allocate_poly(polynomial_t *p, int poly_degree_plus_one);
 
 int free_poly(polynomial_t *p);
+
+// Good to have a random polynomial generator, this will make testing many different polynomials much easier.
+int initialise_poly_rand(polynomial_t *p, int poly_degree_plus_one, int val_min, int val_max);
 
 char* string_representation(polynomial_t *p);
 
