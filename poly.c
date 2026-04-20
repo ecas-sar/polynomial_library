@@ -147,3 +147,47 @@ double* zeroes(polynomial_t *p)
     }
     return zeroes_list;
 }
+
+int poly_sum(polynomial_t *p1, polynomial_t *p2, polynomial_t *result)
+{
+    int p1_degree_plus_one = p1->poly_degree_plus_one;
+    int p2_degree_plus_one = p2->poly_degree_plus_one;
+    int result_degree_plus_one = 0;
+    // Set the result coeff_list length to be the max of the 2 input polynomials.
+    if (p1_degree_plus_one > p2_degree_plus_one)
+    {
+        result_degree_plus_one = p1_degree_plus_one;
+    }
+    else
+    {
+        result_degree_plus_one = p2_degree_plus_one;
+    }
+
+    if (allocate_poly(result, result_degree_plus_one) == 1)
+    {
+        return 1;
+    }
+
+    double *p1_coeff = p1->coefficients;
+    double *p2_coeff = p2->coefficients;
+    double *result_coeff = result->coefficients;
+    for (int i = 0; i < result_degree_plus_one; i++)
+    {
+        // Case where p2 is of higher degree than p1.
+        if (i > p1_degree_plus_one)
+        {
+            result_coeff[i] = p2_coeff[i];
+        }
+        // Case opposite to above.
+        else if (i > p2_degree_plus_one)
+        {
+            result_coeff[i] = p1_coeff[i];
+        }
+        else
+        {
+            result_coeff[i] = p1_coeff[i] + p2_coeff[i];
+        }
+    }
+    printf("%s\n", string_representation(result));
+    return 0;
+}

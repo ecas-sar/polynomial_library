@@ -56,8 +56,7 @@ void initialise_polys(void)
     for (int i = 0; i < num_trials; i++)
     {
         polynomial_t p;
-        CU_ASSERT(initialise_poly_rand(&p, 3, 1, 5) == 0);
-        printf("%s\n", string_representation(&p));
+        CU_ASSERT(initialise_poly_rand(&p, poly_degree_plus_one, 1, 5) == 0);       
     }
 }
 
@@ -77,6 +76,24 @@ void test_zeroes(void)
     CU_ASSERT(two_arrays_equal(expected_zeroes, zeroes(&p), poly_degree, poly_degree) == true);
 }
 
+void test_sum(void)
+{
+    int num_sums = 5;
+    int poly1_degree_plus_one = 3;
+    int poly2_degree_plus_one = 3;
+    for (int i = 0; i < num_sums; i++)
+    {
+        polynomial_t p1;
+        polynomial_t p2;
+        polynomial_t result;
+        initialise_poly_rand(&p1, poly1_degree_plus_one, 1, 5);
+        initialise_poly_rand(&p2, poly2_degree_plus_one, 1, 5);
+        printf("%s\n", string_representation(&p1));
+        printf("%s\n", string_representation(&p2));
+        CU_ASSERT(poly_sum(&p1, &p2, &result) == 0);
+    }
+}
+
 int main()
 {
     CU_initialize_registry();
@@ -85,6 +102,7 @@ int main()
     CU_add_test(suite, "String representation test", string_repr_test);
     CU_add_test(suite, "Zeroes test", test_zeroes);
     CU_add_test(suite, "Random Initialisation Test", initialise_polys);
+    CU_add_test(suite, "Sum Test", test_sum);
     CU_basic_run_tests();
     CU_cleanup_registry();
     return 0;
