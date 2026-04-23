@@ -148,6 +148,63 @@ double* zeroes(polynomial_t *p)
     return zeroes_list;
 }
 
+int add_zeros_to_coeff_list(polynomial_t *p, int poly_degree_plus_one_new)
+{
+    int p_degree_plus_one = p->poly_degree_plus_one;
+    if (poly_degree_plus_one_new <= p_degree_plus_one)
+    {
+        return 1; // Logic of this fails if the new length is less than or equal to the current as we can't add 0s to it.
+    }
+
+    double* new_list = malloc(poly_degree_plus_one_new*sizeof(double));
+    if (new_list == NULL)
+    {
+        return 1;
+    }
+
+    for (int i = 0; i < poly_degree_plus_one_new; i++)
+    {
+        int zeros_range = poly_degree_plus_one_new - p_degree_plus_one;
+        if (i < zeros_range)
+        {
+            new_list[i] = 0;
+        }
+        else
+        {
+            new_list[i] = p->coefficients[i - zeros_range];
+        }
+    }
+    free(p->coefficients);
+    p->coefficients = new_list;
+    p->poly_degree_plus_one = poly_degree_plus_one_new;
+    return 0;
+}
+
+int remove_zeros_from_coeff_list(polynomial_t *p, int poly_degree_plus_one_new)
+{
+    int p_degree_plus_one = p->poly_degree_plus_one;
+    if (poly_degree_plus_one_new > p_degree_plus_one)
+    {
+        return 1; // Opposite of above case, new degree must be smaller.
+    }
+    else if (poly_degree_plus_one_new == p_degree_plus_one)
+    {
+        return 0; // No work to be done if polynomials are of the same length.
+    }
+
+    double* new_list = malloc(poly_degree_plus_one_new*sizeof(double));
+    for (int i = 0; i < p_degree_plus_one; i++)
+    {
+        if (p->coefficients[i] != 0)
+        {
+            new_list[i] = p->coefficients[i];
+        }
+    }
+
+    p->coefficients = new_list;
+    return 0;
+}
+
 int poly_sum(polynomial_t *p1, polynomial_t *p2, polynomial_t *result)
 {
     int p1_degree_plus_one = p1->poly_degree_plus_one;
@@ -157,12 +214,26 @@ int poly_sum(polynomial_t *p1, polynomial_t *p2, polynomial_t *result)
     if (p1_degree_plus_one > p2_degree_plus_one)
     {
         result_degree_plus_one = p1_degree_plus_one;
+        // Adds zeros to the front of polynomial so that the shorter one can be added to the bigger one.
+        // This way, if we have for example, x^2 + x + 1 and x^3 + 3x^2 + 2x + 1, then they will be represented as
+        // [0, 2, 1, 1] and [1, 3, 2, 1], and adding them will end up with the cubed term being the same,
+        // and the lower order terms being added.
+        if (add_zeros_to_coeff_list(p2, p1_degree_plus_one) == 1)
+        {
+            return 1;
+        }
     }
     else
     {
         result_degree_plus_one = p2_degree_plus_one;
+        // Similar logic to here.
+        if (add_zeros_to_coeff_list(p1, p2_degree_plus_one) == 1)
+        {
+            return 1;
+        }
     }
 
+    // If statement does run allocate_poly so does allocate the polynomial while simultaneously preventing errors if it fails, neat!
     if (allocate_poly(result, result_degree_plus_one) == 1)
     {
         return 1;
@@ -173,21 +244,24 @@ int poly_sum(polynomial_t *p1, polynomial_t *p2, polynomial_t *result)
     double *result_coeff = result->coefficients;
     for (int i = 0; i < result_degree_plus_one; i++)
     {
-        // Case where p2 is of higher degree than p1.
-        if (i > p1_degree_plus_one)
-        {
-            result_coeff[i] = p2_coeff[i];
-        }
-        // Case opposite to above.
-        else if (i > p2_degree_plus_one)
-        {
-            result_coeff[i] = p1_coeff[i];
-        }
-        else
-        {
-            result_coeff[i] = p1_coeff[i] + p2_coeff[i];
-        }
+        result_coeff[i] = p1_coeff[i] + p2_coeff[i];
     }
     printf("%s\n", string_representation(result));
+
+    // Removing unnecessary zeros from coefficient lists so that no space is wasted.
+    if (p1_degree_plus_one > p2_degree_plus_one)
+    {
+        if (remove_zeros_from_coeff_list(p2, p2_degree_plus_one) == 1)
+        {
+            return 1;
+        }
+    }
+    else if (p2_degree_plus_one > p1_degree_plus_one)
+    {
+        if (remove_zeros_from_coeff_list(p1, p1_degree_plus_one) == 1)
+        {
+            return 1;
+        }
+    }
     return 0;
 }

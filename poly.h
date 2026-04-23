@@ -27,6 +27,12 @@ double* zeroes(polynomial_t *p);
 // Will only be done for polynomials with degree <= 3 for similar reasoning to above.
 double* turning_points(polynomial_t *p);
 
+// This function is needed for sum_poly when the 2 polynomials being added have differing lengths.
+int add_zeros_to_coeff_list(polynomial_t *p, int poly_degree_plus_one_new);
+
+// Removes after sum is over in order to not waste space and hold inaccurate information about a poluynomials degree.
+int remove_zeros_from_coeff_list(polynomial_t *p, int poly_degree_plus_one_new);
+
 int poly_sum(polynomial_t *p1, polynomial_t *p2, polynomial_t *result);
 
 int poly_scalar_product(polynomial_t *p, double scalar, polynomial_t *result);

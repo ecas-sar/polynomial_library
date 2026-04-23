@@ -80,7 +80,7 @@ void test_sum(void)
 {
     int num_sums = 5;
     int poly1_degree_plus_one = 3;
-    int poly2_degree_plus_one = 3;
+    int poly2_degree_plus_one = 5;
     for (int i = 0; i < num_sums; i++)
     {
         polynomial_t p1;
