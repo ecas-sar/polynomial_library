@@ -286,3 +286,45 @@ int poly_scalar_product(polynomial_t *p, double scalar, polynomial_t *result)
     printf("%s\n", string_representation(result));
     return 0;
 }
+
+int poly_derivative(polynomial_t *p, polynomial_t *result)
+{
+    int p_degree_plus_one = p->poly_degree_plus_one;
+    int result_degree_plus_one = p_degree_plus_one-1; // By the power rule, the derivative of a polynomial is one degree less than that of the polynomial.
+
+    if (allocate_poly(result, result_degree_plus_one) == 1)
+    {
+        return 1;
+    }
+
+    for (int i = 0; i < result_degree_plus_one; i++)
+    {
+        int current_exponent_p = result_degree_plus_one - i;
+        result->coefficients[i] = p->coefficients[i]*current_exponent_p;
+    }
+    printf("%s\n", string_representation(result));
+    return 0;
+}
+
+int poly_integral(polynomial_t *p, polynomial_t *result)
+{
+    int p_degree_plus_one = p->poly_degree_plus_one;
+    int result_degree_plus_one = p_degree_plus_one+1; // By the power rule, the integral of a polynomial is one degree more than that of the polynomial.
+
+    if (allocate_poly(result, result_degree_plus_one) == 1)
+    {
+        return 1;
+    }
+
+    for (int i = 0; i < result_degree_plus_one; i++)
+    {
+        int current_exponent_p = result_degree_plus_one-i;
+        result->coefficients[i] = p->coefficients[i]/(current_exponent_p-1);
+        if (i >= p_degree_plus_one)
+        {
+           result->coefficients[i] = rand() % (5 - 1 + 1) + 5;
+        }
+    }
+    printf("%s\n", string_representation(result));
+    return 0;
+}

@@ -109,6 +109,34 @@ void test_scalar_product(void)
     }
 }
 
+void test_derivative(void)
+{
+    int num_derivs = 5;
+    int poly_degree_plus_one = 4;
+    for (int i = 0; i < num_derivs; i++)
+    {
+        polynomial_t p;
+        polynomial_t result;
+        initialise_poly_rand(&p, poly_degree_plus_one, 1, 5);
+        printf("%s\n", string_representation(&p));
+        CU_ASSERT(poly_derivative(&p, &result) == 0);
+    }
+}
+
+void test_integral(void)
+{
+    int num_integrals = 5;
+    int poly_degree_plus_one = 4;
+    for (int i = 0; i < num_integrals; i++)
+    {
+        polynomial_t p;
+        polynomial_t result;
+        initialise_poly_rand(&p, poly_degree_plus_one, 1, 5);
+        printf("%s\n", string_representation(&p));
+        CU_ASSERT(poly_integral(&p, &result) == 0);
+    }
+}
+
 int main()
 {
     CU_initialize_registry();
@@ -119,6 +147,8 @@ int main()
     CU_add_test(suite, "Random Initialisation Test", initialise_polys);
     CU_add_test(suite, "Sum Test", test_sum);
     CU_add_test(suite, "Scalar Product Test", test_scalar_product);
+    CU_add_test(suite, "Derivative Test", test_derivative);
+    CU_add_test(suite, "Integral Test", test_integral);
     CU_basic_run_tests();
     CU_cleanup_registry();
     return 0;
