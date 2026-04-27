@@ -94,6 +94,21 @@ void test_sum(void)
     }
 }
 
+void test_scalar_product(void)
+{
+    int num_products = 5;
+    int poly_degree_plus_one = 4;
+    for (int i = 0; i < num_products; i++)
+    {
+        polynomial_t p;
+        polynomial_t result;
+        double scalar = rand() % (10 - 1 + 1) + 1;
+        initialise_poly_rand(&p, poly_degree_plus_one, 1, 8);
+        printf("%s\n", string_representation(&p));
+        CU_ASSERT(poly_scalar_product(&p, scalar, &result) == 0);
+    }
+}
+
 int main()
 {
     CU_initialize_registry();
@@ -103,6 +118,7 @@ int main()
     CU_add_test(suite, "Zeroes test", test_zeroes);
     CU_add_test(suite, "Random Initialisation Test", initialise_polys);
     CU_add_test(suite, "Sum Test", test_sum);
+    CU_add_test(suite, "Scalar Product Test", test_scalar_product);
     CU_basic_run_tests();
     CU_cleanup_registry();
     return 0;

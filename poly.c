@@ -246,6 +246,8 @@ int poly_sum(polynomial_t *p1, polynomial_t *p2, polynomial_t *result)
     {
         result_coeff[i] = p1_coeff[i] + p2_coeff[i];
     }
+
+    // Used for debugging.
     printf("%s\n", string_representation(result));
 
     // Removing unnecessary zeros from coefficient lists so that no space is wasted.
@@ -263,5 +265,24 @@ int poly_sum(polynomial_t *p1, polynomial_t *p2, polynomial_t *result)
             return 1;
         }
     }
+    return 0;
+}
+
+int poly_scalar_product(polynomial_t *p, double scalar, polynomial_t *result)
+{
+    double *p_coefficients = p->coefficients;
+    int p_degree_plus_one = p->poly_degree_plus_one;
+
+    if (allocate_poly(result, p_degree_plus_one) == 1)
+    {
+        return 1;
+    }
+
+    double* result_coeff = result->coefficients;
+    for (int i = 0; i < p_degree_plus_one; i++)
+    {
+        result_coeff[i] = scalar*p_coefficients[i];
+    }
+    printf("%s\n", string_representation(result));
     return 0;
 }
