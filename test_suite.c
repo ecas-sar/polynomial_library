@@ -137,6 +137,18 @@ void test_integral(void)
     }
 }
 
+void test_write_to(void)
+{
+    int num_polys_to_write = 5;
+    int poly_degree_plus_one = 4;
+    for (int i = 0; i < num_polys_to_write; i++)
+    {
+        polynomial_t p;
+        initialise_poly_rand(&p, poly_degree_plus_one, 1, 5);
+        CU_ASSERT(write_poly_to_file(&p, "write_to") == 0);
+    }
+}
+
 int main()
 {
     CU_initialize_registry();
@@ -149,6 +161,7 @@ int main()
     CU_add_test(suite, "Scalar Product Test", test_scalar_product);
     CU_add_test(suite, "Derivative Test", test_derivative);
     CU_add_test(suite, "Integral Test", test_integral);
+    CU_add_test(suite, "Writing to a File Test", test_write_to);
     CU_basic_run_tests();
     CU_cleanup_registry();
     return 0;

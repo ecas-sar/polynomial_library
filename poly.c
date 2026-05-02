@@ -93,8 +93,6 @@ char* string_representation(polynomial_t *p)
         }
         strcat(str_poly, term); // Concatentates terms to poly_str.
     }
-    // White box testing.
-    // printf("Polynomial: %s\n", str_poly);
     return str_poly;
 }
 
@@ -326,5 +324,24 @@ int poly_integral(polynomial_t *p, polynomial_t *result)
         }
     }
     printf("%s\n", string_representation(result));
+    return 0;
+}
+
+int write_poly_to_file(polynomial_t *p, char* output_file)
+{
+    char *string_poly = string_representation(p);
+    if (string_poly == NULL)
+    {
+        return 1;
+    }
+
+    FILE *fptr;
+    fptr = fopen(output_file, "a"); // a means I can append to a file (i.e. I can write to it without overwriting old content).
+    if (fptr == NULL)
+    {
+        return 1;
+    }
+    fprintf(fptr, "%s\n", string_poly);
+    fclose(fptr);
     return 0;
 }
