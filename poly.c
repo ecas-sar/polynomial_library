@@ -52,11 +52,11 @@ int initialise_poly_rand(polynomial_t *p, int poly_degree_plus_one, int val_min,
         p->coefficients[i] = random_coefficient;
     }
     // If the first coefficient in the polynomial is 0, this will waste space, so make sure this is never the case.
-    if (p->coefficients[0] == 0)
-    {
-        p->coefficients++;
-    }
-
+    while (p->coefficients[0] == 0)                                                                                                 
+    {               
+        p->coefficients[0] = rand() % (val_max - val_min + 1) + val_min;
+    } 
+    // Can't free this as this polynomial will be used in the test suite.
     return 0;
 }
 
@@ -172,7 +172,6 @@ int add_zeros_to_coeff_list(polynomial_t *p, int poly_degree_plus_one_new)
             new_list[i] = p->coefficients[i - zeros_range];
         }
     }
-    free(p->coefficients);
     p->coefficients = new_list;
     p->poly_degree_plus_one = poly_degree_plus_one_new;
     return 0;
@@ -263,6 +262,7 @@ int poly_sum(polynomial_t *p1, polynomial_t *p2, polynomial_t *result)
             return 1;
         }
     }
+    free_poly(result);
     return 0;
 }
 
@@ -282,6 +282,7 @@ int poly_scalar_product(polynomial_t *p, double scalar, polynomial_t *result)
         result_coeff[i] = scalar*p_coefficients[i];
     }
     printf("%s\n", string_representation(result));
+    free_poly(result);
     return 0;
 }
 
@@ -301,6 +302,7 @@ int poly_derivative(polynomial_t *p, polynomial_t *result)
         result->coefficients[i] = p->coefficients[i]*current_exponent_p;
     }
     printf("%s\n", string_representation(result));
+    free_poly(result);
     return 0;
 }
 
@@ -324,6 +326,31 @@ int poly_integral(polynomial_t *p, polynomial_t *result)
         }
     }
     printf("%s\n", string_representation(result));
+    free_poly(result);
+    return 0;
+}
+
+int read_from_file(polynomial_t *p, char* input_file)
+{
+    FILE *fptr;
+    fptr = fopen(input_file, "r"); // r means the file is in read only form.
+    if (fptr == NULL)
+    {
+        return 1;
+    }
+
+    // We don't know how long each line is going to be, so we have to make the string this big. 
+    // This is obviously an overkill, but in C++ we can just use and std::string and this will be fixed.
+    char string_poly[100]; 
+
+    while (fgets(string_poly, 100, fptr))
+    {
+        printf("%s\n", string_poly);
+    }
+
+    free(string_poly);
+    fclose(fptr);
+
     return 0;
 }
 
@@ -339,9 +366,11 @@ int write_poly_to_file(polynomial_t *p, char* output_file)
     fptr = fopen(output_file, "a"); // a means I can append to a file (i.e. I can write to it without overwriting old content).
     if (fptr == NULL)
     {
+        free(string_poly);
         return 1;
     }
     fprintf(fptr, "%s\n", string_poly);
     fclose(fptr);
+    free(string_poly);
     return 0;
 }
